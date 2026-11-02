@@ -22,14 +22,18 @@ function mountCatalog(form, ticketId, products) {
       </article>`
     ).join('') + '</div>';
   }).join('') + `<div class="basket"><strong>Pedido · ${escapeHtml(ticket.code)}</strong>
-    <div class="basket-lines"></div><p class="basket-total" aria-live="polite"></p>
+    <label hidden data-table>Número da mesa<input name="tableNumber" type="number" min="1" max="9999" step="1" inputmode="numeric"></label><div class="basket-lines"></div><p class="basket-total" aria-live="polite"></p>
     <button class="send-cart" type="submit">Lançar na comanda</button></div>`;
 
   const currentLines = () => submitted?.lines || Array.from(quantities, ([product_id, quantity]) => ({
-    product_id, quantity, price: Number(catalog.get(product_id).price)
+    product_id, quantity, price: Number(catalog.get(product_id).price), ...(catalog.get(product_id).sector==="cozinha" && form.elements.tableNumber.value ? {table_number:Number(form.elements.tableNumber.value)} : {})
   }));
   function render() {
     const lines = currentLines();
+    const hasFood=lines.some(line=>catalog.get(line.product_id)?.sector==="cozinha");
+    form.querySelector('[data-table]').hidden=!hasFood;
+    form.elements.tableNumber.disabled=!hasFood || !!submitted;
+    if(submitted)form.elements.tableNumber.value=lines.find(line=>line.table_number)?.table_number ?? '';
     for (const card of form.querySelectorAll('[data-card]')) {
       const count = lines.find(line => line.product_id === card.dataset.card)?.quantity || 0;
       card.classList.toggle('chosen', count > 0);

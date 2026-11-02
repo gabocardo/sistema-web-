@@ -26,7 +26,7 @@ function mountReport(host, data) {
     if (view === 'payments' && field('method').value === 'Pendente') field('method').value = '';
     const notes = {tickets:'Período pela data da venda. O pagamento mostra a situação atual do convite.',payments:'Período pela data do recebimento no caixa. Inclui pagamentos parciais.',items:'Período pelo lançamento do pedido. O valor representa consumo e exclui itens cancelados.'};
     panel.querySelector('[data-note]').textContent = notes[view];
-    headers = ['Data','Convite',...(items ? ['Setor','Produto','Quantidade'] : ['Pagamento']),'Valor (R$)'];
+    headers = ['Data','Convite',...(items ? ['Setor','Produto','Quantidade'] : (view === 'tickets' ? ['Tipo de convite','Pagamento'] : ['Pagamento'])),'Valor (R$)'];
     rows = [];
     let cents = 0;
     for (const record of data[view]) {
@@ -39,7 +39,7 @@ function mountReport(host, data) {
       if (!items && field('method').value && method !== field('method').value) continue;
       const amount = view === 'payments' ? record.amount : record.price * (items ? record.quantity : 1);
       cents += Math.round(amount * 100);
-      rows.push([key,ticket?.code || '',...(items ? [record.sector,record.name,record.quantity] : [method]),number.format(amount)]);
+      rows.push([key,ticket?.code || '',...(items ? [record.sector,record.name,record.quantity] : (view === 'tickets' ? [record.sale_type === 'porta' ? 'Na porta' : record.sale_type === 'antecipado' ? 'Antecipado' : 'Não registrado',method] : [method])),number.format(amount)]);
     }
     rows.sort((a,b)=>b[0].localeCompare(a[0]));
     panel.querySelector('[data-total]').textContent = rows.length + ' registro(s) · Total ' + money(cents / 100);
