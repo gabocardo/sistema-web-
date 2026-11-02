@@ -4,7 +4,11 @@ Hospedagem: GitHub Pages. Banco e autenticação: Supabase Free.
 
 ## Estado da implementação
 
-Primeira entrega: interface responsiva de acesso, integração de login por senha, verificação de vínculo da equipe e publicação via GitHub Actions. As telas operacionais ainda não estão implementadas. Não usar no evento nesta fase.
+Interface direta em vinho e branco. Login, venda em lote, busca, entrada, benefícios, edição de nome, catálogo, pedidos, preparo, entrega, cancelamento com motivo, caixa com pagamentos parciais e reabertura administrativa estão implementados.
+
+Ainda faltam QR/câmera, gestão de usuários pela interface, exportação, configuração completa por evento e validação de uso em celulares com a equipe. Cancelamento após pagamento requer ajuste financeiro ainda não disponível. Não usar no evento antes do ensaio completo.
+
+Testes SQL em `supabase/tests` usam transações revertidas. Não mantêm participantes ou pagamentos fictícios.
 
 ## Configuração
 
