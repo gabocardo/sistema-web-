@@ -92,6 +92,9 @@ function ticketQR(ticket) {
   area.className = 'qr-ticket';
   area.innerHTML = '<summary>Mostrar QR Code do convite</summary><div class="print-ticket"><strong>Bingo Chatunai</strong>' +
     qr.createSvgTag({cellSize:5,margin:20,scalable:true}) + '<b>' + escapeHtml(ticket.code) + '</b></div><button type="button">Imprimir convite</button>';
+  const image = area.querySelector('svg');
+  image.setAttribute('role','img');
+  image.setAttribute('aria-label','QR Code do convite '+ticket.code);
   area.querySelector('button').onclick = () => window.print();
   screen.querySelector('h2').after(area);
 }
@@ -104,7 +107,8 @@ function mountScanner() {
   search.closest('label').before(open);
   open.onclick = async () => {
     const dialog = document.createElement('dialog');
-    dialog.innerHTML = '<h2>Ler convite</h2><video playsinline muted></video><p role="status">Abrindo câmera…</p><button type="button">Fechar</button>';
+    dialog.setAttribute('aria-labelledby','scanner-title');
+    dialog.innerHTML = '<h2 id="scanner-title">Ler convite</h2><video playsinline muted></video><p role="status">Abrindo câmera…</p><button type="button">Fechar</button>';
     document.body.append(dialog);
     dialog.showModal();
     let stream, frame;
