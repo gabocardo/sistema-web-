@@ -10,3 +10,4 @@
 .metrics p{margin:0;padding:12px;background:#faf5f5;border:1px solid #eadede;border-radius:8px}
 .metrics strong{display:block;font-size:23px;color:var(--wine)}
 @media(max-width:600px){#nav{grid-template-columns:repeat(2,minmax(0,1fr))}#nav button{padding:9px;font-size:14px}}
+.report{border-top:1px solid #eadede;margin-top:24px}.report-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.report-filters input,.report-filters select{min-width:0}.report [data-total]{font-weight:700;color:var(--wine)}
