@@ -54,3 +54,39 @@ function mountDesk() {
   render();
   mountScanner();
 }
+function separateManagement(nav) {
+  const group=document.createElement('details');
+  group.className='management';
+  group.innerHTML='<summary>Gestão do evento</summary><div></div>';
+  document.querySelector('.management')?.remove();
+  nav.after(group);
+  for(const label of ['Resumo','Produtos']){
+    const button=nav.querySelector('[data-page="'+label+'"]');
+    if(button)group.lastElementChild.append(button);
+  }
+  group.onclick=e=>{const b=e.target.closest('[data-page]');if(b)show(b.dataset.page);};
+}
+
+function styleQueue(page) {
+  const grid=document.createElement('div');
+  grid.className='queue-grid';
+  grid.append(...screen.querySelectorAll(':scope > .row'));
+  screen.append(grid);
+  if(page==='Pedidos'){
+    if(!grid.children.length)grid.textContent='Nenhum pedido em andamento.';
+    return;
+  }
+  const search=screen.querySelector('#cash-search');
+  const normalize=v=>v.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  search.oninput=()=>{
+    const query=normalize(search.value.trim());
+    let count=0;
+    for(const row of grid.children){
+      const t=data.tickets.find(t=>t.id===row.querySelector('[data-ticket]').dataset.ticket);
+      row.hidden=!normalize(t.code+' '+(t.participant_name||'')).includes(query);
+      if(!row.hidden)count++;
+    }
+    screen.querySelector('#cash-count').textContent=count ? count+' comanda(s) aberta(s)' : 'Nenhuma comanda encontrada.';
+  };
+  search.oninput();
+}

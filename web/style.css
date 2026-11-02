@@ -60,3 +60,17 @@ input,select{border-color:#88777f;border-radius:8px;background:white;color:var(-
 .basket .send-cart{background:#087554;border-color:#087554}
 @media(min-width:950px){main{max-width:1240px}#nav{grid-template-columns:repeat(6,minmax(0,1fr))}#nav button{display:flex;align-items:flex-start;flex-direction:column;gap:3px}#nav svg{margin-bottom:6px}#nav small{margin:0}}
 @media(max-width:720px){#desk.open{display:block}.open:not(.view-ticket)>#screen,.open.view-ticket>#lookup{display:none}}
+.management{margin:0 0 18px;border-block:1px solid var(--line);padding:4px 0}
+.management summary{display:list-item;cursor:pointer;color:var(--wine);font-weight:650;padding:12px 8px}
+.management>div{display:flex;gap:8px;flex-wrap:wrap}.management button{display:grid;text-align:left;grid-template-columns:24px auto;gap:2px 10px;background:white;color:var(--wine)}.management button.active{background:var(--wine);color:white}.management svg{grid-row:span 2;width:22px;stroke:currentColor;fill:none}.management small{grid-column:2}
+#nav{grid-template-columns:repeat(auto-fit,minmax(min(175px,45%),1fr))}
+.queue-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:12px}
+.queue-grid>.row,[data-view="Produtos"]>.row,.charge,.report,.metrics p{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:16px}
+.queue-grid>.row:last-child{border-bottom:1px solid var(--line)}
+#cash-count{font-size:.9rem;color:var(--muted);margin:8px 0}
+.charge{display:flex;justify-content:space-between;align-items:center}.charge strong{color:var(--wine);font-size:1.65rem}
+#sale,#product{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 16px;padding:18px;border-radius:12px;background:#f8fafc;border:1px solid var(--line)}
+#sale p,#sale button,#product button{grid-column:1/-1}#saleTotal{font-size:1.35rem;font-weight:700;color:var(--wine)}
+[data-view="Produtos"]>.row{display:flex;align-items:center;justify-content:space-between;margin-top:8px;gap:12px}
+.report{margin-top:18px}.report select{width:100%}
+@media(max-width:600px){#sale,#product{grid-template-columns:1fr}.management button{width:auto}}
