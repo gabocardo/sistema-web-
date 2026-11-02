@@ -6,7 +6,9 @@ Hospedagem: GitHub Pages. Banco e autenticação: Supabase Free.
 
 Interface direta em vinho e branco. Login, venda em lote, busca, entrada, benefícios, edição de nome, catálogo, pedidos, preparo, entrega, cancelamento com motivo, caixa com pagamentos parciais e reabertura administrativa estão implementados.
 
-Ainda faltam QR/câmera, gestão de usuários pela interface, exportação, configuração completa por evento e validação de uso em celulares com a equipe. Cancelamento após pagamento requer ajuste financeiro ainda não disponível. Não usar no evento antes do ensaio completo.
+Na comanda, os cartões de produtos permitem ajustar quantidades e conferir o pedido antes do lançamento. O banco registra todos os itens juntos e reconhece reenvios do mesmo pedido. O convite pode ser impresso com QR individual. Em Buscar convite, Ler QR Code abre o cadastro pela câmera.
+
+Ainda faltam gestão de usuários pela interface, exportação, configuração completa por evento e ensaio nos celulares da equipe. Cancelamento após pagamento requer ajuste financeiro ainda não disponível.
 
 Testes SQL em `supabase/tests` usam transações revertidas. Não mantêm participantes ou pagamentos fictícios.
 

@@ -1,0 +1,18 @@
+#order{border-block:1px solid #e8dada;padding-bottom:20px;margin:20px 0}
+#order h3{font-size:16px;margin:18px 0 10px}
+.catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(154px,1fr));gap:10px}
+.product-card{display:flex;flex-direction:column;gap:5px;border:1px solid #ddcece;border-radius:12px;padding:15px 12px;min-width:0}
+.product-card.chosen{background:#fff7f7;border-color:#800000}
+.product-card strong{overflow-wrap:anywhere}.product-card small{color:#645757}
+.product-price{color:#800000;font-weight:650;margin-top:auto;padding:6px 0}
+.stepper{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #eee2e2;padding-top:8px}
+.stepper button{margin:0;width:44px;height:44px;min-height:44px;padding:0;border-radius:9px;font-size:24px}
+.stepper button:first-child{color:#800000;background:white}.stepper output{font-weight:700;font-variant-numeric:tabular-nums}
+.basket{margin-top:18px;padding:16px;border-radius:10px;background:#faf5f5}
+.basket-lines div{display:flex;justify-content:space-between;gap:10px;margin-top:5px}
+.basket-total{font-weight:700}.basket button{margin-bottom:0}
+.qr-ticket summary{cursor:pointer;color:#800000;padding:12px 0;font-weight:650}
+.print-ticket{display:grid;justify-items:center;border:1px solid #ddcece;padding:14px;width:195px}
+.print-ticket svg{width:160px;height:auto}dialog{border:1px solid #ddcece;border-radius:12px;max-width:min(420px,94vw)}dialog::backdrop{background:#270000aa}dialog video{display:block;width:100%;max-height:50vh}
+@media(max-width:430px){.catalog-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.product-card{padding:12px 8px}.stepper button{width:40px}}
+@media print{body *{visibility:hidden}.print-ticket,.print-ticket *{visibility:visible}.print-ticket{position:absolute;top:0;left:0}}
