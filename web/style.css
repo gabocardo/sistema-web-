@@ -46,3 +46,17 @@ input,select{border-color:#88777f;border-radius:8px;background:white;color:var(-
 .skip:focus{transform:none}
 :is(a,button,input,select,summary,[tabindex]):focus{outline:3px solid #164499;outline-offset:3px;box-shadow:0 0 0 3px white}
 @media(max-width:650px){#nav{grid-template-columns:repeat(2,minmax(0,1fr))}#nav button{grid-template-columns:1fr;padding:12px}#nav svg{grid-row:auto;width:22px;height:22px;margin-bottom:5px}#nav small{grid-column:1}main{padding:16px 12px}#nav{gap:8px}}
+:root{--canvas:#f6f8fb;--line:#d8e0ea;--ink:#192437;--muted:#526078;--radius:12px;background:var(--canvas)}
+.signed-in #title{font-size:1.35rem}.signed-in #identity{font-size:.85rem;margin:3px 0 12px}
+#lookup{display:none}.open>#lookup{display:grid;gap:14px;align-content:start}
+#desk.open{display:grid;grid-template-columns:minmax(250px,2fr) minmax(0,3fr);align-items:start;gap:18px}
+.lookup-card{background:white;border:1px solid var(--line);border-radius:12px;padding:18px}
+.lookup-card h2,.desk-empty h2{font-size:1.12rem;margin:0 0 10px}.lookup-card h3{margin:0;font-size:.95rem}
+.lookup-card>button,.lookup-card label{width:100%;margin-inline:0}.list-heading{display:flex;justify-content:space-between;align-items:center}
+.list-heading button,#refresh-desk{background:white;color:var(--wine);margin:0;border:0;padding:8px}
+.ticket-pick{display:grid;grid-template-columns:1fr auto;gap:3px;text-align:left;width:100%;margin:4px 0;background:#f8fafc;color:var(--ink);border:1px solid var(--line);padding:10px;font-size:.88rem}
+.ticket-pick strong{color:var(--wine)}.ticket-pick span{overflow-wrap:anywhere}.ticket-pick small{text-align:right;color:var(--muted)}.ticket-pick.current{background:#fff1f4;border-color:var(--wine)}
+#matches{max-height:420px;overflow:auto}.desk-empty{padding:24px 0;color:var(--muted)}
+.basket .send-cart{background:#087554;border-color:#087554}
+@media(min-width:950px){main{max-width:1240px}#nav{grid-template-columns:repeat(6,minmax(0,1fr))}#nav button{display:flex;align-items:flex-start;flex-direction:column;gap:3px}#nav svg{margin-bottom:6px}#nav small{margin:0}}
+@media(max-width:720px){#desk.open{display:block}.open:not(.view-ticket)>#screen,.open.view-ticket>#lookup{display:none}}

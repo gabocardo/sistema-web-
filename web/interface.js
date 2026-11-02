@@ -23,3 +23,34 @@ function groupTicketSections(container) {
     if (section) section.append(child);
   }
 }
+function mountDesk() {
+  const desk = document.querySelector('#desk');
+  const side = document.querySelector('#lookup');
+  desk.classList.add('open');
+  side.innerHTML = `<section class="lookup-card"><h2>Localizar convite</h2>
+    <label>Código ou nome<input id="search" type="search" autocomplete="off" placeholder="Digite o código ou nome"></label></section>
+    <section class="lookup-card"><div class="list-heading"><h3>Comandas recentes</h3><button type="button" id="all-tickets">Ver todas</button></div>
+    <div id="matches"></div><button type="button" id="refresh-desk">Atualizar lista</button></section>`;
+  screen.innerHTML = '<section class="desk-empty"><h2>Comanda do participante</h2><p>Leia o QR Code ou abra um convite da lista para iniciar o atendimento.</p></section>';
+  const search = side.querySelector('#search');
+  let all = false;
+  function render() {
+    const term = search.value.trim().toLocaleLowerCase('pt-BR');
+    const tickets = data.tickets.filter(t => term
+      ? [t.id,t.code,t.participant_name].some(v=>String(v||'').toLocaleLowerCase('pt-BR').includes(term))
+      : all || !t.closed).sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
+    side.querySelector('h3').textContent = term ? 'Resultados' : all ? 'Todos os convites' : 'Comandas recentes';
+    side.querySelector('#matches').innerHTML = (all || term ? tickets : tickets.slice(0,5)).map(t=>
+      `<button class="ticket-pick" data-ticket="${escapeHtml(t.id)}" aria-label="Abrir convite ${escapeHtml(t.code)}">
+      <strong>${escapeHtml(t.code)}</strong><b>${money(tabTotal(t.id)-tabPaid(t.id))}</b>
+      <span>${escapeHtml(t.participant_name||'Sem nome')}</span><small>${t.closed?'Encerrada':'Aberta'}</small></button>`
+    ).join('') || '<p class="muted">Nenhum convite encontrado.</p>';
+  }
+  side.onoperacao=render;
+  search.oninput=render;
+  side.querySelector('#matches').onclick=e=>{const button=e.target.closest('[data-ticket]');if(button)detail(button.dataset.ticket);};
+  side.querySelector('#all-tickets').onclick=e=>{all=!all;search.value='';e.currentTarget.textContent=all?'Ver recentes':'Ver todas';render();};
+  side.querySelector('#refresh-desk').onclick=()=>work(async()=>{await load();render();if(selected)detail(selected);});
+  render();
+  mountScanner();
+}
