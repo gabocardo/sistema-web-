@@ -28,7 +28,7 @@ function mountDesk() {
   const side = document.querySelector('#lookup');
   desk.classList.add('open');
   side.innerHTML = `<section class="lookup-card"><h2>Localizar convite</h2>
-    <label>Código ou nome<input id="search" type="search" autocomplete="off" placeholder="Digite o código ou nome"></label></section>
+    <label>Código, nome ou telefone<input id="search" type="search" autocomplete="off" placeholder="Digite o código, nome ou telefone"></label></section>
     <section class="lookup-card"><div class="list-heading"><h3>Comandas recentes</h3><button type="button" id="all-tickets">Ver todas</button></div>
     <div id="matches"></div><button type="button" id="refresh-desk">Atualizar lista</button></section>`;
   screen.innerHTML = '<section class="desk-empty"><h2>Comanda do participante</h2><p>Leia o QR Code ou abra um convite da lista para iniciar o atendimento.</p></section>';
@@ -37,13 +37,13 @@ function mountDesk() {
   function render() {
     const term = search.value.trim().toLocaleLowerCase('pt-BR');
     const tickets = data.tickets.filter(t => term
-      ? [t.id,t.code,t.legacy_code,t.participant_name].some(v=>String(v||'').toLocaleLowerCase('pt-BR').includes(term))
+      ? [t.id,t.code,t.legacy_code,t.participant_name,t.phone].some(v=>String(v||'').toLocaleLowerCase('pt-BR').includes(term)) || (/\d/.test(term) && String(t.phone||'').replace(/\D/g,'').includes(term.replace(/\D/g,'')))
       : all || (!t.closed&&!t.available)).sort((a,b)=>all ? a.code.localeCompare(b.code) : String(b.created_at).localeCompare(String(a.created_at)));
     side.querySelector('h3').textContent = term ? 'Resultados' : all ? 'Todos os convites' : 'Comandas recentes';
     side.querySelector('#matches').innerHTML = (all || term ? tickets : tickets.slice(0,5)).map(t=>
       `<button class="ticket-pick" data-ticket="${escapeHtml(t.id)}" aria-label="Abrir convite ${escapeHtml(t.code)}">
       <strong>${escapeHtml(t.code)}</strong><b>${money(tabTotal(t.id)-tabPaid(t.id))}</b>
-      <span>${escapeHtml(t.participant_name||'Sem nome')}</span><small>${t.available?'Disponível':t.closed?'Encerrada':'Aberta'}</small></button>`
+      <span>${escapeHtml(t.participant_name||'Sem nome')}${t.phone?" · "+escapeHtml(t.phone):""}</span><small>${t.available?'Disponível':t.closed?'Encerrada':'Aberta'}</small></button>`
     ).join('') || '<p class="muted">Nenhum convite encontrado.</p>';
   }
   side.onoperacao=render;
@@ -102,13 +102,13 @@ function availableTicket(t){
 async function mountPhone(id){
   if(!['admin','entrada'].includes(role))return;
   const section=document.createElement('form');
-  section.className='ticket-section';
-  section.innerHTML='<h2>Telefone do participante</h2><label>Telefone<input type="tel" name="phone" maxlength="30" autocomplete="tel"></label><button>Salvar telefone</button>';
-  screen.append(section);
+  section.className='phone-editor';
+  section.innerHTML='<label>Telefone<input type="tel" name="phone" maxlength="30" autocomplete="tel"></label><button>Salvar telefone</button>';
+  screen.querySelector('[data-action="name"]').after(section);
   section.querySelector('button').disabled=true;
   try{
-    section.elements.phone.value=await rpc('ticket_phone',{p_ticket:id})||'';
+    section.elements.phone.value=data.tickets.find(t=>t.id===id)?.phone||'';
     section.querySelector('button').disabled=false;
   }catch(e){message(e.message);return;}
-  section.onsubmit=e=>{e.preventDefault();work(async()=>{await rpc('ticket_phone',{p_ticket:id,p_phone:section.elements.phone.value.trim()});message('Telefone atualizado.');});};
+  section.onsubmit=e=>{e.preventDefault();work(async()=>{await rpc('ticket_phone',{p_ticket:id,p_phone:section.elements.phone.value.trim()});await load();detail(id);message('Telefone atualizado.');});};
 }
