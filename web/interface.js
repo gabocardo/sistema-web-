@@ -37,13 +37,13 @@ function mountDesk() {
   function render() {
     const term = search.value.trim().toLocaleLowerCase('pt-BR');
     const tickets = data.tickets.filter(t => term
-      ? [t.id,t.code,t.participant_name].some(v=>String(v||'').toLocaleLowerCase('pt-BR').includes(term))
-      : all || !t.closed).sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
+      ? [t.id,t.code,t.legacy_code,t.participant_name].some(v=>String(v||'').toLocaleLowerCase('pt-BR').includes(term))
+      : all || (!t.closed&&!t.available)).sort((a,b)=>all ? a.code.localeCompare(b.code) : String(b.created_at).localeCompare(String(a.created_at)));
     side.querySelector('h3').textContent = term ? 'Resultados' : all ? 'Todos os convites' : 'Comandas recentes';
     side.querySelector('#matches').innerHTML = (all || term ? tickets : tickets.slice(0,5)).map(t=>
       `<button class="ticket-pick" data-ticket="${escapeHtml(t.id)}" aria-label="Abrir convite ${escapeHtml(t.code)}">
       <strong>${escapeHtml(t.code)}</strong><b>${money(tabTotal(t.id)-tabPaid(t.id))}</b>
-      <span>${escapeHtml(t.participant_name||'Sem nome')}</span><small>${t.closed?'Encerrada':'Aberta'}</small></button>`
+      <span>${escapeHtml(t.participant_name||'Sem nome')}</span><small>${t.available?'Disponível':t.closed?'Encerrada':'Aberta'}</small></button>`
     ).join('') || '<p class="muted">Nenhum convite encontrado.</p>';
   }
   side.onoperacao=render;
@@ -89,4 +89,26 @@ function styleQueue(page) {
     screen.querySelector('#cash-count').textContent=count ? count+' comanda(s) aberta(s)' : 'Nenhuma comanda encontrada.';
   };
   search.oninput();
+}
+function availableTicket(t){
+  selected=t.id;
+  screen.innerHTML=`<h2>Convite <span class="code">${escapeHtml(t.code)}</span></h2><p>Disponível para venda</p><button id="sell-this">Registrar venda deste convite</button><button id="back">Voltar</button>`;
+  ticketQR(t);
+  screen.querySelector('#sell-this').hidden=!['admin','entrada'].includes(role);
+  screen.querySelector('#sell-this').onclick=()=>{show('Vender convites');document.querySelector('#sale').elements.ticket.value=t.id;};
+  screen.querySelector('#back').onclick=()=>show('Buscar convite');
+  document.querySelector('#desk').classList.add('view-ticket');
+}
+async function mountPhone(id){
+  if(!['admin','entrada'].includes(role))return;
+  const section=document.createElement('form');
+  section.className='ticket-section';
+  section.innerHTML='<h2>Telefone do participante</h2><label>Telefone<input type="tel" name="phone" maxlength="30" autocomplete="tel"></label><button>Salvar telefone</button>';
+  screen.append(section);
+  section.querySelector('button').disabled=true;
+  try{
+    section.elements.phone.value=await rpc('ticket_phone',{p_ticket:id})||'';
+    section.querySelector('button').disabled=false;
+  }catch(e){message(e.message);return;}
+  section.onsubmit=e=>{e.preventDefault();work(async()=>{await rpc('ticket_phone',{p_ticket:id,p_phone:section.elements.phone.value.trim()});message('Telefone atualizado.');});};
 }

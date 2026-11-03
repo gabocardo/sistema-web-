@@ -30,7 +30,7 @@ function mountReport(host, data) {
     rows = [];
     let cents = 0;
     for (const record of data[view]) {
-      const when = new Date(record.created_at);
+      if(view==='tickets' && record.available)continue;const when = new Date(record.created_at);
       const key = day.format(when);
       if ((field('start').value && key < field('start').value) || (field('end').value && key > field('end').value)) continue;
       const ticket = view === 'tickets' ? record : tickets.get(record.ticket_id);
