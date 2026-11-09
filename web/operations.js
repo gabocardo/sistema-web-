@@ -7,7 +7,7 @@ function renderBoard(){
   const items=data.items.filter(i=>role==='admin'||i.sector===role).sort((a,b)=>String(b.status_changed_at||b.created_at).localeCompare(String(a.status_changed_at||a.created_at))||b.id.localeCompare(a.id));
   screen.innerHTML='<h2>Pedidos</h2><p id="board-sync" role="status">Atualização automática a cada 5 segundos</p><div class="order-board">'+[
     ['recebido','Lista de pedidos'],['em preparo','Em preparo'],['pronto','Prontos'],['entregue','Entregues']
-  ].map(([status,title])=>{const group=items.filter(i=>i.status===status);return '<section class="board-column"><h3>'+title+' <span>'+group.length+'</span></h3>'+group.map(i=>itemMarkup(i,true)).join('')+(group.length?'':'<p class="muted">Nenhum pedido</p>')+'</section>';}).join('')+'</div><details class="cancelled-orders"><summary>Pedidos cancelados ('+items.filter(i=>i.status==='cancelado').length+')</summary>'+items.filter(i=>i.status==='cancelado').map(i=>itemMarkup(i)).join('')+'</details>';
+  ].map(([status,title])=>{const group=items.filter(i=>i.status===status);return '<section class="board-column" data-status="'+status+'"><h3>'+title+' <span>'+group.length+'</span></h3>'+group.map(i=>itemMarkup(i,true)).join('')+(group.length?'':'<p class="muted">Nenhum pedido</p>')+'</section>';}).join('')+'</div><details class="cancelled-orders"><summary>Pedidos cancelados ('+items.filter(i=>i.status==='cancelado').length+')</summary>'+items.filter(i=>i.status==='cancelado').map(i=>itemMarkup(i)).join('')+'</details>';
   bindItems();
   if(focused)Array.from(screen.querySelectorAll('[data-item]')).find(b=>b.dataset.item===focused.id&&b.dataset.status===focused.status)?.focus({preventScroll:true});
 }
