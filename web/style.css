@@ -88,3 +88,6 @@ input,select{border-color:#88777f;border-radius:8px;background:white;color:var(-
 .board-column h3{background:var(--stage-color);color:#17202b;padding:14px 12px;margin:-12px -12px 12px;gap:8px;align-items:center;min-height:52px}
 .board-column h3 span{background:#ffffffd9;color:#17202b;border-radius:20px;min-width:28px;padding:3px 8px;text-align:center}
 .board-column .row{border-radius:8px;border:1px solid #d5dce6;margin-top:12px}
+.board-column .order-actions,.cancelled-orders .order-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+.order-actions button{width:100%;min-width:0;min-height:44px;margin:0;padding:8px 4px;font-size:.85rem}
+.order-actions button:disabled{background:#d0cece;color:#414141;border-color:#d0cece;opacity:1;cursor:not-allowed;box-shadow:none}

@@ -4,10 +4,10 @@ show=function(page){baseShow(page);if(page==='Pedidos')renderBoard();if(page==='
 function renderBoard(){
   const focus=document.activeElement?.closest('[data-item]');
   const focused=focus?{id:focus.dataset.item,status:focus.dataset.status}:null;
-  const items=data.items.filter(i=>role==='admin'||i.sector===role).sort((a,b)=>String(b.status_changed_at||b.created_at).localeCompare(String(a.status_changed_at||a.created_at))||b.id.localeCompare(a.id));
+  const items=data.items.filter(i=>i.sector==='cozinha'&&(role==='admin'||i.sector===role)).sort((a,b)=>String(b.status_changed_at||b.created_at).localeCompare(String(a.status_changed_at||a.created_at))||b.id.localeCompare(a.id));
   screen.innerHTML='<h2>Pedidos</h2><p id="board-sync" role="status">Atualização automática a cada 5 segundos</p><div class="order-board">'+[
     ['recebido','Lista de pedidos'],['em preparo','Em preparo'],['pronto','Prontos'],['entregue','Entregues']
-  ].map(([status,title])=>{const group=items.filter(i=>i.status===status);return '<section class="board-column" data-status="'+status+'"><h3>'+title+' <span>'+group.length+'</span></h3>'+group.map(i=>itemMarkup(i,true)).join('')+(group.length?'':'<p class="muted">Nenhum pedido</p>')+'</section>';}).join('')+'</div><details class="cancelled-orders"><summary>Pedidos cancelados ('+items.filter(i=>i.status==='cancelado').length+')</summary>'+items.filter(i=>i.status==='cancelado').map(i=>itemMarkup(i)).join('')+'</details>';
+  ].map(([status,title])=>{const group=items.filter(i=>i.status===status);return '<section class="board-column" data-status="'+status+'"><h3>'+title+' <span>'+group.length+'</span></h3>'+group.map(i=>boardItemCard(i)).join('')+(group.length?'':'<p class="muted">Nenhum pedido</p>')+'</section>';}).join('')+'</div><details class="cancelled-orders"><summary>Pedidos cancelados ('+items.filter(i=>i.status==='cancelado').length+')</summary>'+items.filter(i=>i.status==='cancelado').map(i=>boardItemCard(i)).join('')+'</details>';
   bindItems();
   if(focused)Array.from(screen.querySelectorAll('[data-item]')).find(b=>b.dataset.item===focused.id&&b.dataset.status===focused.status)?.focus({preventScroll:true});
 }
@@ -21,7 +21,7 @@ itemMarkup=function(i,controls=false){
 };
 let operationBusy=false,boardRefreshing=false;
 const originalWork=work;
-work=async function(fn){operationBusy=true;try{return await originalWork(fn);}finally{operationBusy=false;}};
+work=async function(fn){operationBusy=true;try{return await originalWork(fn);}finally{operationBusy=false;screen.querySelectorAll('[data-unavailable]').forEach(b=>b.disabled=true);}};
 const originalBindItems=bindItems;
 bindItems=function(){originalBindItems();for(const b of screen.querySelectorAll('[data-status="cancelado"]')){const handler=b.onclick;b.onclick=()=>{if(confirm('Cancelar este pedido? O registro continuará no histórico.'))handler();};}};
 setInterval(async()=>{
@@ -79,4 +79,17 @@ function mountItemPayment(payment,id){
  payment.onsubmit=e=>{e.preventDefault();settle(false);};
  payment.querySelector('[data-close]').onclick=()=>settle(true);
  render();
+}
+
+function boardItemCard(item){
+ const active=['recebido','em preparo','pronto'].includes(item.status);
+ const ticket=data.tickets.find(t=>t.id===item.ticket_id);
+ const actions=[
+  ['em preparo','Preparar',item.status==='recebido'&&item.requires_preparation!==false],
+  ['pronto','Pronto',['recebido','em preparo'].includes(item.status)],
+  ['entregue','Entregue',active],
+  ['cancelado','Cancelar',['recebido','em preparo'].includes(item.status)&&!ticket?.closed&&!Number(item.paid_amount||0)]
+ ];
+ const buttons='<div class="order-actions">'+actions.map(([status,label,enabled])=>'<button type="button" '+(enabled?'data-item="'+escapeHtml(item.id)+'" data-status="'+status+'"':'disabled data-unavailable')+' aria-label="'+label+' — '+escapeHtml(item.name)+'">'+label+'</button>').join('')+'</div>';
+ return itemMarkup(item,false).replace(/<\/div>$/,buttons+'</div>');
 }
