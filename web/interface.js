@@ -112,3 +112,20 @@ async function mountPhone(id){
   }catch(e){message(e.message);return;}
   section.onsubmit=e=>{e.preventDefault();work(async()=>{await rpc('ticket_phone',{p_ticket:id,p_phone:section.elements.phone.value.trim()});await load();detail(id);message('Telefone atualizado.');});};
 }
+function focusPurchases(){const target=screen.querySelector('#purchased-items');if(target){target.focus({preventScroll:true});target.scrollIntoView({block:'start'});}}
+function organizeGuest(){
+  const name=screen.querySelector('#name');
+  if(name){
+    const details=document.createElement('details');details.className='guest-details';
+    details.innerHTML='<summary>Dados convidado</summary>';
+    const label=name.closest('label');label.before(details);
+    details.append(label,screen.querySelector('[data-action="name"]'),screen.querySelector('.phone-editor'));
+  }
+  const title=Array.from(screen.querySelectorAll('h2')).find(h=>h.textContent==='Benefícios');
+  if(title){const grid=document.createElement('div');grid.className='benefits-grid';title.after(grid);while(grid.nextElementSibling?.classList.contains('row'))grid.append(grid.nextElementSibling);
+    const id=selected,legacy=data.benefits.filter(b=>b.ticket_id===id&&['initial_card','final_card'].includes(b.benefit));
+    if(legacy.length&&!data.benefits.some(b=>b.ticket_id===id&&b.benefit==='welcome_kit')){
+      const note=document.createElement('p');note.textContent='Histórico: '+legacy.map(b=>b.benefit==='initial_card'?'cartela inicial entregue':'cartela final entregue').join(', ')+'. Confirme apenas os itens restantes do kit.';grid.firstElementChild.append(note);
+    }
+  }
+}
