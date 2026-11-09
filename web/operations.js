@@ -40,3 +40,42 @@ function mountPreparation(){
   row.after(button);
  }
 }
+const baseDetail=detail;
+detail=function(id){baseDetail(id);const payment=screen.querySelector('#payment');if(payment)mountItemPayment(payment,id);};
+const boardItemMarkup=itemMarkup;
+itemMarkup=function(i,controls=false){
+ const total=Math.round(Number(i.price)*i.quantity*100)/100,paid=Number(i.paid_amount||0);
+ const label=i.status==='cancelado'?'Não cobrado':paid>=total?'Pago':'Pendente';
+ return boardItemMarkup(i,controls).replace('</strong>','</strong> <span class="item-payment '+(label==='Pago'?'paid':'')+'">'+label+'</span>');
+};
+function mountItemPayment(payment,id){
+ const items=data.items.filter(i=>i.ticket_id===id&&i.status!=='cancelado'&&Number(i.paid_amount||0)<Number(i.price)*i.quantity);
+ const remaining=i=>Math.round((Number(i.price)*i.quantity-Number(i.paid_amount||0))*100)/100;
+ const full=Math.round(items.reduce((sum,i)=>sum+remaining(i),0)*100)/100;
+ const key='chatunai-recebimento-'+document.querySelector('#identity').textContent+'-'+id;
+ let pending=JSON.parse(sessionStorage.getItem(key)||'null'),busy=false;
+ payment.innerHTML='<fieldset><legend>Selecione os itens para receber</legend>'+items.map(i=>'<label class="payment-item"><input type="checkbox" name="item" value="'+escapeHtml(i.id)+'"><span>'+escapeHtml(i.quantity+' × '+i.name)+'</span><strong>'+money(remaining(i))+'</strong></label>').join('')+(items.length?'':'<p>Nenhum item pendente.</p>')+'</fieldset><p class="charge"><span>Selecionado</span><strong data-selected-total>'+money(0)+'</strong></p><label>Forma<select name="method"><option>Pix</option><option>Dinheiro</option><option>Cartão</option></select></label><div class="payment-actions"><button type="submit" data-receive>Receber itens selecionados</button><button type="button" data-close>Encerrar comanda · '+money(full)+'</button></div><p data-retry role="status" hidden>Recebimento sem confirmação. Confira o envio anterior antes de registrar outro.</p>';
+ const selectedItems=()=>Array.from(payment.querySelectorAll('input:checked')).map(el=>el.value);
+ const total=()=>Math.round(items.filter(i=>selectedItems().includes(i.id)).reduce((sum,i)=>sum+remaining(i),0)*100)/100;
+ function render(){
+  payment.querySelector('[data-selected-total]').textContent=money(total());
+  payment.querySelector('[data-retry]').hidden=!pending;
+  payment.querySelector('[data-receive]').textContent=pending?'Conferir recebimento anterior':'Receber itens selecionados';
+  payment.querySelector('[data-receive]').disabled=busy||(!pending&&!selectedItems().length);
+  payment.querySelector('[data-close]').disabled=busy||!!pending;
+  payment.querySelectorAll('input,select').forEach(el=>el.disabled=busy||!!pending);
+ }
+ payment.onchange=render;
+ async function settle(close){
+  if(busy)return;
+  if(!pending){if(!close&&!selectedItems().length)return;if(close&&!confirm('Receber '+money(full)+' e encerrar esta comanda?'))return;
+   pending={p_request:crypto.randomUUID(),p_ticket:id,p_items:close?[]:selectedItems(),p_method:payment.elements.method.value,p_close:close,p_expected:close?full:total()};sessionStorage.setItem(key,JSON.stringify(pending));}
+  busy=true;render();
+  try{const response=await rpc('settle_items',pending);sessionStorage.removeItem(key);pending=null;await load();if(selected===id){detail(id);focusPurchases();}message(response.message);}
+  catch(e){if(e.definitive){pending=null;sessionStorage.removeItem(key);}message(e.message);}
+  finally{busy=false;if(payment.isConnected)render();}
+ }
+ payment.onsubmit=e=>{e.preventDefault();settle(false);};
+ payment.querySelector('[data-close]').onclick=()=>settle(true);
+ render();
+}
