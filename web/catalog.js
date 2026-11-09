@@ -89,6 +89,7 @@ function mountCatalog(form, ticketId, products) {
 }
 
 function ticketQR(ticket) {
+  if (!window.BINGO_CONFIG.enableQR) return;
   const qr = qrcode(0,'M');
   qr.addData(ticket.id);
   qr.make();
@@ -104,6 +105,7 @@ function ticketQR(ticket) {
 }
 
 function mountScanner() {
+  if (!window.BINGO_CONFIG.enableQR) return;
   const search = document.querySelector('#search');
   if (!search) return;
   const open = document.createElement('button');

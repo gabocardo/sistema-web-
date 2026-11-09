@@ -31,7 +31,7 @@ function mountDesk() {
     <label>Código, nome ou telefone<input id="search" type="search" autocomplete="off" placeholder="Digite o código, nome ou telefone"></label></section>
     <section class="lookup-card"><div class="list-heading"><h3>Comandas recentes</h3><button type="button" id="all-tickets">Ver todas</button></div>
     <div id="matches"></div><button type="button" id="refresh-desk">Atualizar lista</button></section>`;
-  screen.innerHTML = '<section class="desk-empty"><h2>Comanda do participante</h2><p>Leia o QR Code ou abra um convite da lista para iniciar o atendimento.</p></section>';
+  screen.innerHTML = '<section class="desk-empty"><h2>Comanda do participante</h2><p>Busque pelo nome, telefone ou número e abra o convite para iniciar o atendimento.</p></section>';
   const search = side.querySelector('#search');
   let all = false;
   function render() {
