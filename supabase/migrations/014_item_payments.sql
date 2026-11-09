@@ -74,15 +74,6 @@ else
   update public.items set status=target,reason=case when target='cancelado' then p_data->>'reason' else null end where id=i.id;
  elsif p_action='pay' then
   raise exception 'Atualize o site e utilize o pagamento por itens';
-  if r not in ('admin','caixa') then raise exception 'Sem permissão para receber'; end if;
-  if t.closed then raise exception 'Comanda encerrada'; end if;
-  select coalesce(sum(quantity*price),0) into due from public.items where ticket_id=t.id and status<>'cancelado';
-  select coalesce(sum(amount),0) into received from public.payments where ticket_id=t.id;
-  due:=due-received;value:=due;
-  if due<0 or (p_data->>'amount')::numeric is distinct from due then raise exception 'Valor inválido ou saldo alterado. Atualize a comanda.'; end if;
-  if p_data->>'method' is null or p_data->>'method' not in ('Pix','Dinheiro','Cartão') then raise exception 'Forma de pagamento inválida'; end if;
-  if value>0 then insert into public.payments(ticket_id,amount,method,actor) values(t.id,value,p_data->>'method',auth.uid()); end if;
-  if value=due then update public.tickets set closed=true where id=t.id; end if;
  elsif p_action='reopen' then
   if r<>'admin' then raise exception 'Apenas administração'; end if;
   if nullif(trim(p_data->>'reason'),'') is null then raise exception 'Informe o motivo'; end if;

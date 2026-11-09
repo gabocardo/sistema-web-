@@ -16,6 +16,7 @@ itemMarkup=function(i,controls=false){
  let html=originalItemMarkup(i,controls);
  if(i.requires_preparation===false)html=html.replace(/<button[^>]*data-status="em preparo"[^>]*>Preparar<\/button>/g,'');
  if(i.status==='cancelado')html=html.replace(' · cancelado ·',' · Pedido cancelado ·');
+ if(Number(i.paid_amount||0)>0||data.tickets.find(t=>t.id===i.ticket_id)?.closed)html=html.replace(/<button[^>]*data-status="cancelado"[^>]*>Cancelar<\/button>/g,'');
  return html;
 };
 let operationBusy=false,boardRefreshing=false;
@@ -26,7 +27,7 @@ bindItems=function(){originalBindItems();for(const b of screen.querySelectorAll(
 setInterval(async()=>{
  if(!token||!data||document.hidden||screen.dataset.view!=='Pedidos'||operationBusy||boardRefreshing)return;
  boardRefreshing=true;
- try{const fresh=await rpc('service_list');if(screen.dataset.view==='Pedidos'&&!operationBusy&&data){const changed=JSON.stringify(data.items)!==JSON.stringify(fresh.items);Object.assign(data,fresh);if(changed)renderBoard();const status=screen.querySelector('#board-sync');if(status)status.textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR')+' · a cada 5 segundos';}}
+ try{const [fresh,reception]=await Promise.all([rpc('service_list'),rpc('reception_list')]);if(screen.dataset.view==='Pedidos'&&!operationBusy&&data){const changed=JSON.stringify(data.items)!==JSON.stringify(fresh.items);const ticketChanged=JSON.stringify(data.tickets.map(t=>[t.id,t.participant_name]))!==JSON.stringify(reception.tickets.map(t=>[t.id,t.participant_name]));const phones=new Map(data.tickets.map(t=>[t.id,t.phone]));reception.tickets.forEach(t=>{t.phone=phones.get(t.id)||'';t.created_at=t.sold_at||t.created_at;});Object.assign(data,reception,fresh);if(changed||ticketChanged)renderBoard();const status=screen.querySelector('#board-sync');if(status)status.textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR')+' · a cada 5 segundos';}}
  catch{const status=screen.querySelector('#board-sync');if(status)status.textContent='Sem atualização. Tentando reconectar…';}
  finally{boardRefreshing=false;}
 },5000);
