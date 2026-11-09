@@ -10,7 +10,7 @@ function mountCatalog(form, ticketId, products) {
     ['cartelas', 'Cartelas']
   ];
   form.innerHTML = '<h2>Novo pedido</h2>' + categories.map(([sector, title]) => {
-    const group = products.filter(product => product.sector === sector);
+    const group = products.filter(product => product.sector === sector).sort((a,b)=>a.name.localeCompare(b.name,"pt-BR"));
     if (!group.length) return '';
     return '<h3>' + title + '</h3><div class="catalog-grid">' + group.map(product =>
       `<article class="product-card" data-card="${product.id}">

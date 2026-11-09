@@ -75,3 +75,5 @@ input,select{border-color:#88777f;border-radius:8px;background:white;color:var(-
 .report{margin-top:18px}.report select{width:100%}
 @media(max-width:600px){#sale,#product{grid-template-columns:1fr}.management button{width:auto}}
 #door-payment:not([hidden]){display:block;margin:6px 0;padding:12px;border-radius:8px;background:#eeeef1;color:var(--ink)}
+
+.benefits-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.benefits-grid .row{margin:0}.catalog-grid{gap:16px;margin:16px 0 28px}.product-card{padding:18px}.guest-details{margin:24px 0}.guest-details summary{padding:14px;font-weight:700;cursor:pointer}.guest-details label{margin-top:16px}@media(max-width:560px){.benefits-grid{grid-template-columns:1fr}}
