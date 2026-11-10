@@ -69,7 +69,7 @@ function mountItemPayment(payment,id){
  payment.onchange=render;
  async function settle(close){
   if(busy)return;
-  if(!pending){if(!close&&!selectedItems().length)return;if(close&&!confirm('Receber '+money(full)+' e encerrar esta comanda?'))return;
+  if(!pending){if(!close&&!selectedItems().length)return;const amount=close?full:total();const method=payment.elements.method.value;const question=close?'Confirmar o recebimento de '+money(amount)+' por '+method+' e encerrar esta comanda?':'Confirmar o recebimento de '+money(amount)+' por '+method+' pelos itens selecionados? A comanda continuará aberta.';if(!confirm(question))return;
    pending={p_request:crypto.randomUUID(),p_ticket:id,p_items:close?[]:selectedItems(),p_method:payment.elements.method.value,p_close:close,p_expected:close?full:total()};sessionStorage.setItem(key,JSON.stringify(pending));}
   busy=true;render();
   try{const response=await rpc('settle_items',pending);sessionStorage.removeItem(key);pending=null;await load();if(selected===id){detail(id);focusPurchases();}message(response.message);}
