@@ -17,7 +17,7 @@ const {chromium}=require('playwright');const fs=require('fs'),path=require('path
  await page.goto('https://chatunai.test/');await page.getByLabel('E-mail').fill('test@example.org');await page.getByLabel('Senha').fill('teste');await page.getByRole('button',{name:'Entrar',exact:true}).click();await page.locator('#search').waitFor();
  assert.equal(await page.getByRole('button',{name:'Ler QR Code'}).count(),0);
  await page.getByRole('button',{name:/Vender convites —/}).click();await page.getByLabel('Tipo de convite').selectOption('porta');assert.deepEqual(await page.locator('#sale [name=method] option').allTextContents(),['Pix','Dinheiro','Cartão']);
- await page.getByRole('button',{name:/Caixa —/}).click();await page.getByRole('button',{name:'Abrir comanda',exact:true}).click();
+ await page.getByRole('button',{name:/Caixa —/}).click();await page.locator('#cash-search').fill('(11) 99999-0000');assert.equal(await page.getByRole('button',{name:'Abrir comanda',exact:true}).count(),1);await page.getByRole('button',{name:'Abrir comanda',exact:true}).click();assert.equal(await page.getByRole('heading',{name:'Receber pagamento',exact:true}).count(),1);
  assert.equal(await page.evaluate(()=>document.activeElement.id),'purchased-items');assert.equal(await page.locator('.qr-ticket').count(),0);
  assert.equal(await page.locator('.guest-details').getAttribute('open'),null);await page.getByText('Dados convidado',{exact:true}).click();assert(await page.getByLabel('Editar nome').isVisible());assert(await page.getByLabel('Telefone',{exact:true}).isVisible());
  assert.equal(await page.locator('.benefits-grid .row').count(),2);assert.deepEqual(await page.locator('.product-card > strong').allTextContents(),['Água','Pizza']);

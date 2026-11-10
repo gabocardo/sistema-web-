@@ -77,13 +77,16 @@ function styleQueue(page) {
     return;
   }
   const search=screen.querySelector('#cash-search');
+  if(!['admin','entrada'].includes(role))search.closest('label').firstChild.textContent='Buscar por código ou nome';
   const normalize=v=>v.toLocaleLowerCase('pt-BR').normalize('NFD').replace(/[\u0300-\u036f]/g,'');
   search.oninput=()=>{
     const query=normalize(search.value.trim());
     let count=0;
     for(const row of grid.children){
       const t=data.tickets.find(t=>t.id===row.querySelector('[data-ticket]').dataset.ticket);
-      row.hidden=!normalize(t.code+' '+(t.participant_name||'')).includes(query);
+      const digits=query.replace(/\D/g,'');
+      const phoneMatch=digits.length>0&&/^[\d\s()+.-]+$/.test(query)&&String(t.phone||'').replace(/\D/g,'').includes(digits);
+      row.hidden=!(normalize(t.code+' '+(t.participant_name||'')+' '+(t.phone||'')).includes(query)||phoneMatch);
       if(!row.hidden)count++;
     }
     screen.querySelector('#cash-count').textContent=count ? count+' comanda(s) aberta(s)' : 'Nenhuma comanda encontrada.';
