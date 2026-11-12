@@ -81,6 +81,7 @@ detail=function(id){const current=data.tickets.find(t=>t.id===id);if(current?.av
     button.type = 'button';
     button.textContent = label;
     button.onclick = () => {
+      const disclosure=target.closest('details');if(disclosure)disclosure.open=true;
       target.tabIndex = -1;
       target.focus({preventScroll:true});
       target.scrollIntoView({block:'start'});
