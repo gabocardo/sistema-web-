@@ -93,7 +93,7 @@ function boardItemCard(item){
   ['cancelado','Cancelar',['recebido','em preparo'].includes(item.status)&&!ticket?.closed&&!Number(item.paid_amount||0)]
  ];
  const buttons='<div class="order-actions">'+actions.map(([status,label,enabled])=>'<button type="button" '+(enabled?'data-item="'+escapeHtml(item.id)+'" data-status="'+status+'"':'disabled data-unavailable')+' aria-label="'+label+' — '+escapeHtml(item.name)+'">'+label+'</button>').join('')+'</div>';
- return itemMarkup(item,false).replace('<div class="row">','<div class="row" data-board-item="'+escapeHtml(item.id)+'">').replace(/<\/div>$/,(active?'<p class="order-wait" hidden></p>':'')+buttons+'</div>');
+ return itemMarkup(item,false).replace('<div class="row">','<div class="row" data-board-item="'+escapeHtml(item.id)+'">').replace(/<\/div>$/,(active?'<span class="order-warning" role="img" aria-label="Atenção: pedido aguardando há pelo menos 10 minutos" hidden>⚠️</span><p class="order-wait" hidden></p>':'')+buttons+'</div>');
 }
 
 function orderAge(item,now=Date.now()){
@@ -110,6 +110,8 @@ function updateOrderAges(){
   const age=item?orderAge(item,now):null;
   card.classList.toggle('order-waiting',age?.level==='waiting');
   card.classList.toggle('order-late',age?.level==='late');
+  const warning=card.querySelector('.order-warning');
+  if(warning)warning.hidden=age?.level!=='late';
   const label=card.querySelector('.order-wait');
   if(label){label.hidden=!age;label.textContent=age?'Aguardando entrega há '+age.minutes+' min':'';}
  }

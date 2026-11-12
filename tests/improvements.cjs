@@ -32,7 +32,7 @@ const {chromium}=require('playwright');const fs=require('fs'),path=require('path
  assert.deepEqual(await page.locator('.board-column[data-status="entregue"] [data-board-item]').evaluateAll(els=>els.map(e=>e.dataset.boardItem)),['del-new','del-old']);
  assert(await page.locator('[data-board-item="old"]').evaluate(el=>el.classList.contains('order-late')));
  assert(await page.locator('[data-board-item="mid"]').evaluate(el=>el.classList.contains('order-waiting')));
- assert.equal(await page.locator('.board-column[data-status="entregue"] .order-late').count(),0);
+ assert.equal(await page.locator('.board-column[data-status="entregue"] .order-late').count(),0);assert(await page.locator('[data-board-item="old"] .order-warning').isVisible());assert(await page.locator('[data-board-item="mid"] .order-warning').isHidden());assert.equal(await page.locator('.board-column[data-status="entregue"] .order-warning').count(),0);
  // Age changes without a new server-side order or status update.
  await page.clock.setSystemTime(new Date(now));await page.clock.fastForward(5*60000);
  assert(await page.locator('[data-board-item="mid"]').evaluate(el=>el.classList.contains('order-late')));
