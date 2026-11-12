@@ -57,10 +57,13 @@ function mountItemPayment(payment,id){
  const full=Math.round(items.reduce((sum,i)=>sum+remaining(i),0)*100)/100;
  const key='chatunai-recebimento-'+document.querySelector('#identity').textContent+'-'+id;
  let pending=JSON.parse(sessionStorage.getItem(key)||'null'),busy=false;
- payment.innerHTML='<fieldset><legend>Selecione os itens para receber</legend>'+items.map(i=>'<label class="payment-item"><input type="checkbox" name="item" value="'+escapeHtml(i.id)+'"><span>'+escapeHtml(i.quantity+' × '+i.name)+'</span><strong>'+money(remaining(i))+'</strong></label>').join('')+(items.length?'':'<p>Nenhum item pendente.</p>')+'</fieldset><p class="charge"><span>Selecionado</span><strong data-selected-total>'+money(0)+'</strong></p><label>Forma<select name="method"><option>Pix</option><option>Dinheiro</option><option>Cartão</option></select></label><div class="payment-actions"><button type="submit" data-receive>Receber itens selecionados</button><button type="button" data-close>Encerrar comanda · '+money(full)+'</button></div><p data-retry role="status" hidden>Recebimento sem confirmação. Confira o envio anterior antes de registrar outro.</p>';
+ payment.innerHTML='<fieldset><legend>Selecione os itens para receber</legend><button type="button" data-select-all>Selecionar tudo</button>'+items.map(i=>'<label class="payment-item"><input type="checkbox" name="item" value="'+escapeHtml(i.id)+'"><span>'+escapeHtml(i.quantity+' × '+i.name)+'</span><strong>'+money(remaining(i))+'</strong></label>').join('')+(items.length?'':'<p>Nenhum item pendente.</p>')+'</fieldset><p class="charge"><span>Selecionado</span><strong data-selected-total>'+money(0)+'</strong></p><label>Forma<select name="method"><option>Pix</option><option>Dinheiro</option><option>Cartão</option></select></label><div class="payment-actions"><button type="submit" data-receive>Receber itens selecionados</button><button type="button" data-close>Encerrar comanda · '+money(full)+'</button></div><p data-retry role="status" hidden>Recebimento sem confirmação. Confira o envio anterior antes de registrar outro.</p>';
  const selectedItems=()=>Array.from(payment.querySelectorAll('input:checked')).map(el=>el.value);
  const total=()=>Math.round(items.filter(i=>selectedItems().includes(i.id)).reduce((sum,i)=>sum+remaining(i),0)*100)/100;
  function render(){
+  const all=payment.querySelector('[data-select-all]');
+  all.textContent=items.length&&selectedItems().length===items.length?'Desmarcar tudo':'Selecionar tudo';
+  all.disabled=busy||!!pending||!items.length;
   payment.querySelector('[data-selected-total]').textContent=money(total());
   payment.querySelector('[data-retry]').hidden=!pending;
   payment.querySelector('[data-receive]').textContent=pending?'Conferir recebimento anterior':'Receber itens selecionados';
@@ -68,6 +71,7 @@ function mountItemPayment(payment,id){
   payment.querySelector('[data-close]').disabled=busy||!!pending;
   payment.querySelectorAll('input,select').forEach(el=>el.disabled=busy||!!pending);
  }
+ payment.querySelector('[data-select-all]').onclick=()=>{if(busy||pending||!items.length)return;const checked=selectedItems().length!==items.length;payment.querySelectorAll('input[name="item"]').forEach(el=>el.checked=checked);render();};
  payment.onchange=render;
  async function settle(close){
   if(busy)return;
