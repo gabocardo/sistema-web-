@@ -92,8 +92,8 @@ input,select{border-color:#88777f;border-radius:8px;background:white;color:var(-
 .order-actions button{width:100%;min-width:0;min-height:44px;margin:0;padding:8px 4px;font-size:.85rem}
 .order-actions button:disabled{background:#d0cece;color:#414141;border-color:#d0cece;opacity:1;cursor:not-allowed;box-shadow:none}
 /* Tempo desde o lançamento, enquanto o pedido aguarda entrega. */
-.board-column .row.order-waiting{background:#fff;border:5px solid #d2aa00}
-.board-column .row.order-late{background:#fff;border:5px solid #d9690b;padding-top:44px}
+.board-column .row.order-waiting{background:#fff;border:5px solid #d2aa00;border-left-width:10px}
+.board-column .row.order-late{background:#fff;border:5px solid #d9690b;border-left-width:10px;padding-top:44px}
 .board-column [data-board-item]{position:relative}
 .order-warning{position:absolute;top:8px;right:10px;font-size:24px;line-height:1}
 .order-wait{font-weight:700;font-size:.85rem;color:#624a00}
