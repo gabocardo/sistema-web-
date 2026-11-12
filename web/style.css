@@ -96,5 +96,5 @@ input,select{border-color:#88777f;border-radius:8px;background:white;color:var(-
 .board-column .row.order-late{background:#fff;border:5px solid #d9690b;border-left-width:10px;padding-top:44px}
 .board-column [data-board-item]{position:relative}
 .order-warning{position:absolute;top:8px;right:10px;font-size:24px;line-height:1}
-.order-wait{font-weight:700;font-size:.85rem;color:#624a00}
-.order-late .order-wait{color:#8b3900}
+.order-wait{font-weight:800;font-size:1rem;line-height:1.4;color:#4c3500;background:#ffdc48;padding:12px;border-radius:6px}
+.order-late .order-wait{color:#fff;background:#9c3c00}
