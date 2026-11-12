@@ -98,3 +98,6 @@ input,select{border-color:#88777f;border-radius:8px;background:white;color:var(-
 .order-warning{position:absolute;top:8px;right:10px;font-size:24px;line-height:1}
 .order-wait{font-weight:800;font-size:1rem;line-height:1.4;color:#4c3500;background:#ffdc48;padding:12px;border-radius:6px}
 .order-late .order-wait{color:#fff;background:#9c3c00}
+.benefits-details>summary{padding:14px;min-height:48px;cursor:pointer;font-weight:700}
+.benefits-details>summary h2{display:inline;font-size:1rem;margin:0}
+.benefits-details[open]>.benefits-grid{margin-top:14px}

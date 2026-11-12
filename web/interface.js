@@ -126,6 +126,8 @@ function organizeGuest(){
   }
   const title=Array.from(screen.querySelectorAll('h2')).find(h=>h.textContent==='Benefícios');
   if(title){const grid=document.createElement('div');grid.className='benefits-grid';title.after(grid);while(grid.nextElementSibling?.classList.contains('row'))grid.append(grid.nextElementSibling);
+    const disclosure=document.createElement('details');disclosure.className='benefits-details';
+    const summary=document.createElement('summary');title.before(disclosure);summary.append(title);disclosure.append(summary,grid);
     const id=selected,legacy=data.benefits.filter(b=>b.ticket_id===id&&['initial_card','final_card'].includes(b.benefit));
     if(legacy.length&&!data.benefits.some(b=>b.ticket_id===id&&b.benefit==='welcome_kit')){
       const note=document.createElement('p');note.textContent='Histórico: '+legacy.map(b=>b.benefit==='initial_card'?'cartela inicial entregue':'cartela final entregue').join(', ')+'. Confirme apenas os itens restantes do kit.';grid.firstElementChild.append(note);
